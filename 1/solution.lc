@@ -1,0 +1,48 @@
+import fs
+
+input := fs.read_file(__dir__ + "input.txt")
+lines := input.split('\n')
+
+mutable head: int = 50
+mutable head_at_zero_count_at_end_of_turn: int = 0
+mutable head_at_zero_count: int = 0
+
+for line in lines:
+    sign := if line[0] == 'R' then 1 else -1
+    value := (line[1..] as int)
+    move := sign * value
+
+    mutable c: int = 0
+
+    mutable pos: int = head
+    step: int = if move > 0 then 1 else -1
+
+    for i in [1..|move|]:
+        pos += step
+        if pos < 0:
+            pos += 100
+        else if pos >= 100:
+            pos -= 100
+        end
+
+        if pos == 0:
+            c++
+        end
+    end
+
+    head_at_zero_count += c
+    print(f"Move: {move}, Head {head}, Crossings: {c}")
+
+    head = (head + move) % 100
+    if head < 0:
+        head += 100
+    end
+
+    if head == 0:
+        head_at_zero_count_at_end_of_turn++
+    end
+end
+
+print("Head at: " + head)
+print("Head at zero count at end of turn: " + head_at_zero_count_at_end_of_turn)
+print("Head at zero count: " + head_at_zero_count)
