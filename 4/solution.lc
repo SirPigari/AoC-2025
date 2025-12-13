@@ -1,0 +1,62 @@
+import fs
+
+input := fs.read_file(__dir__ + "input.txt")
+grid: list[list[bool]] = input.split_lines().map((line) => line.iter().map((ch) => ch == '@').collect()).collect()
+
+mutable state: list[list[bool]] = grid
+
+fun has_fewer_than_four_adjacent(x: int, y: int) -> bool:
+    directions: list[(int, int)] = [(-1, -1), (-1, 0), (-1, 1),
+                                    (0, -1),          (0, 1),
+                                    (1, -1),  (1, 0),  (1, 1)]
+    count: int = 0
+    n := len(state)
+    m := len(state[0])
+
+    for ((dx, dy) in directions):
+        nx := x + dx
+        ny := y + dy
+
+        if nx >= 0 && nx < n && ny >= 0 && ny < m:
+            if state[nx][ny]:
+                count++
+            end
+            if count >= 4:
+                return false
+            end
+        end
+    end
+
+    return true
+end
+
+mutable total: int = 0
+mutable first: int = 0
+
+while true:
+    mutable local_total: int = 0
+    for i in range(len(state)):
+        for j in range(len(state[0])):
+            if state[i][j]:
+                l := has_fewer_than_four_adjacent(i, j)
+                print(f"Cell ({i}, {j}) has fewer than four adjacent '@': {l}")
+                if l:
+                    local_total++
+                    state[i][j] = false
+                end
+            end
+        end
+    end
+    // print('\n'.join(state.map((row) => ''.join(row.map((cell) => if cell then '@' else '.').collect())).collect()))
+    print(local_total)
+    if local_total == 0:
+        break
+    end
+    if first == 0:
+        first = local_total
+    end
+    total += local_total
+end
+
+print(f"First: {first}")
+print(f"Total: {total}")

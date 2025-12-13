@@ -1,0 +1,51 @@
+import fs
+
+input := fs.read_file(__dir__ + "input.txt")
+banks: list[str] = input.split_lines()
+
+// banks: list[str] = [
+//     "987654321111111",
+//     "811111111111119",
+//     "234234234234278",
+//     "818181911112111"
+// ]
+
+fun max(l: list) -> str:
+    mutable maximum: str = l[0]
+    for item in l:
+        if item > maximum:
+            maximum = item
+        end
+    end
+    return maximum
+end
+
+fun largest_jolts(bank: str, k: int) -> int:
+    n := len(bank)
+    result: list[str] = []
+    start := 0
+
+    for remaining in range(k, 0, -1, as=list):
+        e := n - remaining + 1
+        max_digit := max(bank[start..e] as list)
+        result += [max_digit]
+        start = (bank as list).index_of(max_digit, start) + 1
+    end
+    return ''.join(result) as int
+end
+
+mutable total_p1: int = 0
+mutable total_p2: int = 0
+
+print("Largest jolts per bank:")
+for bank in banks:
+    l1 := largest_jolts(bank, 2)
+    l2 := largest_jolts(bank, 12)
+    total_p1 += l1
+    total_p2 += l2
+    print(f"Bank: {bank} -> Largest Jolts ( 2): {l1}")
+    print(f"Bank: {bank} -> Largest Jolts (12): {l2}")
+end
+
+print(f"Total Largest Jolts Sum for Part 1: {total_p1}")
+print(f"Total Largest Jolts Sum for Part 2: {total_p2}")

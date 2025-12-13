@@ -3,9 +3,6 @@ import (floor) from math
 
 input := fs.read_file(__dir__ + "input.txt")
 ranges: list[(int, int)] = input.split(',').map((it) => it.trim().split('-')).map((it) => (it[0] as int, it[1] as int)).collect()
-// ranges := [(11, 22), (95, 115), (998, 1012), (1188511880, 1188511890), (222220, 222224),
-//           (1698522, 1698528), (446443, 446449), (38593856, 38593862), (565653, 565659),
-//           (824824821, 824824827), (2121212118, 2121212124)]
 
 mutable invalid_id_sum_p1: int = 0
 mutable invalid_ids_p1: list[int] = []
@@ -35,6 +32,10 @@ end
 fun is_valid_id_p2(id: int) -> bool:
     id_str := id as str
     n := len(id_str)
+
+    if n == 1:
+        return true
+    end
 
     max_l := floor(n / 2.0) as int
     for l in [1..max_l]:
@@ -67,10 +68,10 @@ for ((start_id, end_id) in ranges):
         if id % 100 == 0:
             print(f"Checking ID: {id}")
         end
-        // if !is_valid_id_p1(id):
-        //     invalid_id_sum_p1 += id
-        //     invalid_ids_p1 += [id]
-        // end
+        if !is_valid_id_p1(id):
+            invalid_id_sum_p1 += id
+            invalid_ids_p1 += [id]
+        end
         if !is_valid_id_p2(id):
             invalid_id_sum_p2 += id
             invalid_ids_p2 += [id]
@@ -78,7 +79,7 @@ for ((start_id, end_id) in ranges):
     end
 end
 
-// print("Invalid ID sum P1: " + invalid_id_sum_p1)
-// print("Invalid IDs P1: " + invalid_ids_p1)
+print("Invalid ID sum P1: " + invalid_id_sum_p1)
+print("Invalid IDs P1: " + invalid_ids_p1)
 print("Invalid ID sum P2: " + invalid_id_sum_p2)
 print("Invalid IDs P2: " + invalid_ids_p2)

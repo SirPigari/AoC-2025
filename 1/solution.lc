@@ -1,7 +1,7 @@
 import fs
 
 input := fs.read_file(__dir__ + "input.txt")
-lines := input.split('\n')
+lines := input.split_lines()
 
 mutable head: int = 50
 mutable head_at_zero_count_at_end_of_turn: int = 0
