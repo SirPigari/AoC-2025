@@ -1,0 +1,109 @@
+import fs
+
+input := fs.read_file(__dir__ + "input.txt")
+grid := input.split_lines().map((line) => line.iter().collect()).collect()
+
+height := len(grid)
+width := len(grid[0])
+
+mutable start_col: int = 0
+for (col in range(width)):
+    if grid[0][col] == 'S':
+        start_col = col
+        break
+    end
+end
+
+fun part1() -> int:
+    mutable beams: list[(int, int)] = [(0, start_col)]
+    mutable split_count: int = 0
+    mutable processed_splitters: list[(int, int)] = []
+    
+    while len(beams) > 0:
+        mutable new_beams: list[(int, int)] = []
+        
+        for ((row, col) in beams):
+            next_row := row + 1
+            
+            if next_row >= height:
+                continue
+            end
+            
+            next_cell := grid[next_row][col]
+            
+            if next_cell == '^':
+                splitter_pos := (next_row, col)
+                
+                mutable already_processed: bool = false
+                for (pos in processed_splitters):
+                    if pos[0] == next_row && pos[1] == col:
+                        already_processed = true
+                        break
+                    end
+                end
+                
+                if !already_processed:
+                    split_count++
+                    processed_splitters += [splitter_pos]
+                    
+                    if col > 0:
+                        new_beams += [(next_row, col - 1)]
+                    end
+                    if col < width - 1:
+                        new_beams += [(next_row, col + 1)]
+                    end
+                end
+            else:
+                new_beams += [(next_row, col)]
+            end
+        end
+        
+        beams = new_beams
+    end
+    return split_count
+end
+
+fun part2() -> int:
+    mutable paths: list[(int, int, str)] = [(0, start_col, "")]
+    mutable timeline_count: int = 0
+    mutable final_states: list[str] = []
+    
+    while len(paths) > 0:
+        mutable new_paths: list[(int, int, str)] = []
+        
+        for ((row, col, signature) in paths):
+            print(f"At position ({row}, {col}) with signature '{signature}'")
+            print(final_states)
+            next_row := row + 1
+            
+            if next_row >= height:
+                if (!final_states.contains(signature)):
+                    final_states += [signature]
+                    timeline_count++
+                    print(f"Found unique timeline: {signature}")
+                end
+                continue
+            end
+            
+            next_cell := grid[next_row][col]
+            
+            if next_cell == '^':
+                if col > 0:
+                    new_paths += [(next_row, col - 1, signature + "L")]
+                end
+                if col < width - 1:
+                    new_paths += [(next_row, col + 1, signature + "R")]
+                end
+            else:
+                new_paths += [(next_row, col, signature + "D")]
+            end
+        end
+        
+        paths = new_paths
+    end
+    
+    return timeline_count
+end
+
+// print(f"Part 1: {part1()}")
+print(f"Part 2: {part2()}")

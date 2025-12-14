@@ -34,7 +34,7 @@ Lucia handles this with the `__dir__` variable to locate the `input.txt` file.
 | 04  | Printing Department       | Yes    | Yes    | [Link](./04/walkthrough.md) |
 | 05  | Cafeteria                 | Yes    | Yes    | [Link](./05/walkthrough.md) |
 | 06  | Trash Compactor           | Yes    | Yes    | [Link](./06/walkthrough.md) |
-| 07  | Laboratories              | No     | No     | No                          |
+| 07  | Laboratories              | Yes    | No     | No                          |
 | 08  | Playground                | No     | No     | No                          |
 | 09  | Movie Theater             | No     | No     | No                          |
 | 10  | Factory                   | No     | No     | No                          |
