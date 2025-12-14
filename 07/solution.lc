@@ -64,46 +64,42 @@ fun part1() -> int:
 end
 
 fun part2() -> int:
-    mutable paths: list[(int, int, str)] = [(0, start_col, "")]
-    mutable timeline_count: int = 0
-    mutable final_states: list[str] = []
-    
-    while len(paths) > 0:
-        mutable new_paths: list[(int, int, str)] = []
-        
-        for ((row, col, signature) in paths):
-            print(f"At position ({row}, {col}) with signature '{signature}'")
-            print(final_states)
-            next_row := row + 1
-            
-            if next_row >= height:
-                if (!final_states.contains(signature)):
-                    final_states += [signature]
-                    timeline_count++
-                    print(f"Found unique timeline: {signature}")
-                end
+    mutable dp_curr: list[int] = array(width, 0)
+    mutable dp_next: list[int] = array(width, 0)
+
+    dp_curr[start_col] = 1
+
+    for (r in range(height - 1)):
+        for (c in range(width)):
+            if dp_curr[c] == 0:
                 continue
             end
-            
-            next_cell := grid[next_row][col]
-            
+
+            next_cell := grid[r + 1][c]
+
             if next_cell == '^':
-                if col > 0:
-                    new_paths += [(next_row, col - 1, signature + "L")]
+                if c > 0:
+                    dp_next[c - 1] += dp_curr[c]
                 end
-                if col < width - 1:
-                    new_paths += [(next_row, col + 1, signature + "R")]
+                if c < width - 1:
+                    dp_next[c + 1] += dp_curr[c]
                 end
             else:
-                new_paths += [(next_row, col, signature + "D")]
+                dp_next[c] += dp_curr[c]
             end
         end
-        
-        paths = new_paths
+
+        dp_curr = dp_next
+        dp_next = array(width, 0)
     end
-    
-    return timeline_count
+
+    mutable total: int = 0
+    for (c in range(width)):
+        total += dp_curr[c]
+    end
+
+    return total
 end
 
-// print(f"Part 1: {part1()}")
+print(f"Part 1: {part1()}")
 print(f"Part 2: {part2()}")
