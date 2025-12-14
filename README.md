@@ -1,6 +1,6 @@
 # Advent of Code 2025
 
-Solutions to [Advent of Code 2025](https://adventofcode.com/2025/) written in [Lucia Programming Language](https://github.com/SirPigari/lucia-rust/) (commit `b750746`).
+Solutions to [Advent of Code 2025](https://adventofcode.com/2025/) written in [Lucia Programming Language](https://github.com/SirPigari/lucia-rust/) (commit `93c3c2a`).
 
 ## Purpose
 
@@ -14,6 +14,32 @@ Each directory contains:
 - `input.txt`: The input data for that day's challenge.
 - `solution.lc`: The Lucia code that solves the challenge.
 - `walkthrough.md`: A detailed explanation of the solution approach and logic.
+
+## Usage
+
+To run a solution for a specific day, navigate to that day's directory and execute the `solution.lc` file using the Lucia interpreter. For example, to run the solution for Day 6:
+```bash
+lucia ./06/solution.lc
+```
+You do not need to cd into the directory; just provide the path to the file.
+Lucia handles this with the `__dir__` variable to locate the `input.txt` file.
+
+## Completed Solutions
+
+| Day | Title                     | Part 1 | Part 2 | Walkthrough                 |
+|-----|---------------------------|--------|--------|-----------------------------|
+| 01  | Secret Entrance           | Yes    | Yes    | [Link](./01/walkthrough.md) |
+| 02  | Gift Shop                 | Yes    | Yes    | [Link](./02/walkthrough.md) |
+| 03  | Lobby                     | Yes    | Yes    | [Link](./03/walkthrough.md) |
+| 04  | Printing Department       | Yes    | Yes    | [Link](./04/walkthrough.md) |
+| 05  | Cafeteria                 | Yes    | Yes    | [Link](./05/walkthrough.md) |
+| 06  | Trash Compactor           | Yes    | Yes    | [Link](./06/walkthrough.md) |
+| 07  | Laboratories              | No     | No     | No                          |
+| 08  | Playground                | No     | No     | No                          |
+| 09  | Movie Theater             | No     | No     | No                          |
+| 10  | Factory                   | No     | No     | No                          |
+| 11  | Reactor                   | No     | No     | No                          |
+| 12  | Christmas Tree Farm       | No     | No     | No                          |
 
 ## Contribution
 

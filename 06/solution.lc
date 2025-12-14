@@ -1,0 +1,78 @@
+import fs
+
+input := fs.read_file(__dir__ + "input.txt")
+
+fun part1() -> int:
+    (line1, line2, line3, line4, operators_line) := input.split_lines().map((line) => line.split_whitespace().map((part) => part.trim()).collect()).collect()
+    mutable problems: list[(int, int, int, int, str)] = []
+
+    for ((i, ch) in operators_line.enumerate()):
+        if ch == '+' || ch == '*':
+            a := line1[i] as int
+            b := line2[i] as int
+            c := line3[i] as int
+            d := line4[i] as int
+            problems += [(a, b, c, d, ch)]
+        end
+    end
+    mutable total: int = 0
+
+    for ((a, b, c, d, operator) in problems):
+        result := if operator == '+' then a + b + c + d else a * b * c * d
+        print(f"Evaluating: {a} {operator} {b} {operator} {c} {operator} {d} = {result}")
+        total += result
+    end
+    return total
+end
+
+fun part2() -> int:
+    lines := input.split_lines()
+    grid := lines.map((line) => line.iter().collect()).collect()
+    grid_length := len(grid)
+    grid_width := len(grid[0])
+
+    mutable p2: int = 0
+    mutable start_c: int = 0
+
+    for (cc in range(grid_width + 1, as=list)):
+        mutable is_blank: bool = true
+        if cc < grid_width:
+            for (r in range(grid_length)):
+                if grid[r][cc] != ' ':
+                    is_blank = false
+                    break
+                end
+            end
+        end
+
+        if is_blank:
+            op := grid[grid_length - 1][start_c]
+
+            mutable total: int = if op == '+' then 0 else 1
+
+            for (c in range(cc - 1, start_c - 1, -1, as=list)):
+                mutable n: int = 0
+                for (r in range(grid_length - 1)):
+                    if grid[r][c] != ' ':
+                        n = n * 10 + (grid[r][c] as int)
+                    end
+                end
+
+                if op == '+':
+                    total += n
+                else:
+                    total *= n
+                end
+            end
+            print(f"Evaluating operation {op} from column {start_c} to {cc - 1}: total = {total}")
+
+            p2 += total
+            start_c = cc + 1
+        end
+    end
+
+    return p2
+end
+
+print(f"Part 1: {part1()}")
+print(f"Part 2: {part2()}")

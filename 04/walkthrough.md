@@ -211,7 +211,3 @@ The center roll starts with 8 neighbors (not accessible), then 4 neighbors (stil
 - **Space**: O(N * M) for storing the grid state
 
 The number of iterations depends on the grid structure but is typically small (the "erosion" converges quickly).
-
-## Alternate Interpretation Note
-
-The problem states rolls are removed if they have "fewer than four rolls" adjacent. This means 0, 1, 2, or 3 neighbors makes a roll accessible. The code correctly implements this with the `< 4` comparison.

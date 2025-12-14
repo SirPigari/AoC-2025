@@ -1,0 +1,57 @@
+import fs
+
+input := fs.read_file(__dir__ + "input.txt").trim().to_lf()
+(ranges_raw, ids_raw) := input.split("\n\n")
+ranges: list[(int, int)] = ranges_raw.split_lines().map((line) => scope (line):
+    parts := line.split("-")
+    (parts[0] as int, parts[1] as int)
+end).collect()
+ids: list[int] = ids_raw.split_lines().map((line) => line as int).collect()
+
+fun part_1() -> int:
+    mutable total: int = 0
+
+    id_len := len(ids)
+    
+    for ((i, id) in ids.enumerate()):
+        mutable valid: bool = false
+        for ((low, high) in ranges):
+            if id >= low && id <= high:
+                valid = true
+                break
+            end
+        end
+        print(f"ID {id} -> {valid} ({i+1}/{id_len})")
+        if valid:
+            total++
+        end
+    end
+
+    return total
+end
+
+fun part_2() -> int:
+    ranges = ranges.sort_by_unstable((a, b) => a[0] < b[0])
+
+    total := 0
+    current_low := ranges[0][0]
+    current_high := ranges[0][1]
+
+    for ((low, high) in ranges[1..]):
+        if low <= current_high + 1:
+            if high > current_high:
+                current_high = high
+            end
+        else:
+            total += current_high - current_low + 1
+            current_low = low
+            current_high = high
+        end
+    end
+
+    total += current_high - current_low + 1
+    return total
+end
+
+print(f"Part 1: {part_1()}")
+print(f"Part 2: {part_2()}")
