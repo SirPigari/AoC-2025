@@ -1,0 +1,101 @@
+import fs
+
+input := fs.read_file(__dir__ + "input.txt")
+box_coords: list[(int,int,int)] = input.split_lines().map((line) => scope (line):
+    parts := line.split(',')
+    (parts[0] as int, parts[1] as int, parts[2] as int)
+end).collect()
+
+n := len(box_coords)
+
+fun dist2(a: (int,int,int), b: (int,int,int)) -> int:
+    dx := a[0] - b[0]
+    dy := a[1] - b[1]
+    dz := a[2] - b[2]
+    return dx*dx + dy*dy + dz*dz
+end
+
+fun build_edges() -> list[(int,int,int)]:
+    mutable edges: list[(int,int,int)] = []
+    for i in range(n):
+        for j in range(i+1, n):
+            edges += [(i, j, dist2(box_coords[i], box_coords[j]))]
+        end
+    end
+    return edges.sort((a) => a[2])
+end
+
+fun make_union_find() -> (&list, &list):
+    mutable parent: &list = &[i for i in range(n)]
+    mutable size: &list = &array(n, 1)
+    return ((parent, size))
+end
+
+fun find(x: int, parent: &list) -> int:
+    if ((*parent)[x] != x):
+        p := *parent
+        p[x] = find(p[x], parent)
+        (*parent) = p
+    end
+    return (*parent)[x]
+end
+
+fun union(x: int, y: int, parent: &list, size: &list) -> bool:
+    rx := find(x, parent)
+    ry := find(y, parent)
+    if rx == ry:
+        return false
+    end
+    if ((*size)[rx] < (*size)[ry]):
+        (rx, ry) = (ry, rx)
+    end
+    p := *parent
+    s := *size
+    p[ry] = rx
+    s[rx] += s[ry],
+    (*parent) = p,
+    (*size) = s
+    return true
+end
+
+fun part1() -> int:
+    edges := build_edges()
+    (parent, size) := make_union_find()
+
+    mutable connections: int = 0
+    for ((i, j, _) in edges):
+        if connections >= 1000:
+            break
+        end
+        union(i, j, parent, size)
+        connections++
+    end
+
+    mutable circuit_sizes: list[int] = []
+    for i in range(n):
+        if ((*parent)[i] == i):
+            circuit_sizes += [(*size)[i]]
+        end
+    end
+
+    circuit_sizes = circuit_sizes.sort((x) => -x)
+    return circuit_sizes[0] * circuit_sizes[1] * circuit_sizes[2]
+end
+
+fun part2() -> int:
+    edges := build_edges()
+    (parent, size) := make_union_find()
+    mutable remaining_circuits: int = n
+
+    for ((i, j, _) in edges):
+        if union(i, j, parent, size):
+            remaining_circuits -= 1
+            if remaining_circuits == 1:
+                return box_coords[i][0] * box_coords[j][0]
+            end
+        end
+    end
+end
+
+// print(f"Part 1: {part1()}")
+print(f"Part 2: {part2()}")

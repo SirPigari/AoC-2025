@@ -17,10 +17,13 @@ Each directory contains:
 
 ## Usage
 
-To run a solution for a specific day, navigate to that day's directory and execute the `solution.lc` file using the Lucia interpreter. For example, to run the solution for Day 6:
+To run a solution for a specific day, navigate to that day's directory and execute the `solution.lc` file using the Lucia interpreter. For example, to run the solution for Day 1:
 ```bash
-lucia ./06/solution.lc
+lucia ./01/solution.lc -q
 ```
+
+The `-q` flag suppresses debug output, showing only the final results. (Speeding up the execution slightly.)
+
 You do not need to cd into the directory; just provide the path to the file.
 Lucia handles this with the `__dir__` variable to locate the `input.txt` file.
 
@@ -34,8 +37,8 @@ Lucia handles this with the `__dir__` variable to locate the `input.txt` file.
 | 04  | Printing Department       | Yes    | Yes    | [Link](./04/walkthrough.md) |
 | 05  | Cafeteria                 | Yes    | Yes    | [Link](./05/walkthrough.md) |
 | 06  | Trash Compactor           | Yes    | Yes    | [Link](./06/walkthrough.md) |
-| 07  | Laboratories              | Yes    | Yes    | No                          |
-| 08  | Playground                | No     | No     | No                          |
+| 07  | Laboratories              | Yes    | Yes    | [Link](./07/walkthrough.md) |
+| 08  | Playground                | Yes    | Yes    | [Link](./08/walkthrough.md) |
 | 09  | Movie Theater             | No     | No     | No                          |
 | 10  | Factory                   | No     | No     | No                          |
 | 11  | Reactor                   | No     | No     | No                          |

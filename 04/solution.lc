@@ -47,7 +47,6 @@ while true:
             end
         end
     end
-    // print('\n'.join(state.map((row) => ''.join(row.map((cell) => if cell then '@' else '.').collect())).collect()))
     print(local_total)
     if local_total == 0:
         break
