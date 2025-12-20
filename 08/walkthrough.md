@@ -52,7 +52,7 @@ Efficiently track which boxes belong to which circuits:
 import fs
 
 input := fs.read_file(__dir__ + "input.txt")
-box_coords: list[(int,int,int)] = input.split_lines().map((line) => scope (line):
+box_coords: list[(int, int, int)] = input.split_lines().map((line) => scope (line):
     parts := line.split(',')
     (parts[0] as int, parts[1] as int, parts[2] as int)
 end).collect()
@@ -82,8 +82,8 @@ end
 ### Build Edge List
 
 ```lucia
-fun build_edges() -> list[(int,int,int)]:
-    mutable edges: list[(int,int,int)] = []
+fun build_edges() -> list[(int, int, int)]:
+    mutable edges: list[(int, int, int)] = []
     for i in range(n):
         for j in range(i+1, n):
             edges += [(i, j, dist2(box_coords[i], box_coords[j]))]

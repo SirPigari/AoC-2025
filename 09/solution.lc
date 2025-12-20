@@ -1,0 +1,165 @@
+import fs
+
+input := fs.read_file(__dir__ + "input.txt")
+
+red_tiles: list[(int, int)] =
+    input.split_lines().map((line) => scope(line):
+        parts := line.split(',')
+        (parts[0] as int, parts[1] as int)
+    end).collect()
+
+fun part1() -> int:
+    mutable max_area: int = 0
+    n := len(red_tiles)
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            (x1,y1) := red_tiles[i]
+            (x2,y2) := red_tiles[j]
+
+            if x1 == x2 || y1 == y2 then continue
+
+            w := if x1 < x2 then x2 - x1 + 1 else x1 - x2 + 1
+            h := if y1 < y2 then y2 - y1 + 1 else y1 - y2 + 1
+
+            area := w * h
+            if area > max_area:
+                max_area = area
+            end
+        end
+    end
+
+    return max_area
+end
+
+fun part2() -> int:
+    coords: list[int] = []
+    for ((x,y) in red_tiles):
+        coords += [x, y]
+    end
+
+    coords = coords.sort().dedup()
+
+    fun compress(v: int) -> int:
+        coords.index_of(v)
+    end
+
+    tiles: list[(int,int)] = []
+    print("Compressing coordinates...")
+    for ((x,y) in red_tiles):
+        tiles += [(compress(x), compress(y))]
+    end
+
+    xs := tiles.map((p)=>p[0]).collect()
+    ys := tiles.map((p)=>p[1]).collect()
+
+    width := xs.max() + 1
+    height := ys.max() + 1
+
+    grid := array(height, array(width, 0))
+
+    print("Building grid...")
+    for ((x,y) in tiles):
+        grid[y][x] = 1
+    end
+
+    n := len(tiles)
+
+    for i in range(n):
+        for j in range(n):
+            if i == j then continue
+
+            (x1,y1) := tiles[i]
+            (x2,y2) := tiles[j]
+
+            if x1 == x2:
+                lo := if y1 < y2 then y1 else y2
+                hi := if y1 > y2 then y1 else y2
+                mutable k: int = lo
+                while (k <= hi):
+                    grid[k][x1] = 1
+                    k++
+                end
+            end
+
+            if y1 == y2:
+                lo := if x1 < x2 then x1 else x2
+                hi := if x1 > x2 then x1 else x2
+                mutable k: int = lo
+                while (k <= hi):
+                    grid[y1][k] = 1
+                    k++
+                end
+            end
+        end
+        print(f"Processed {i+1}/{n} tiles")
+    end
+
+    for y in range(height):
+        borders: list[int] = []
+        for x in range(width):
+            if grid[y][x] != 0:
+                borders += [x]
+            end
+        end
+
+        if len(borders) >= 2:
+            lo := borders.min()
+            hi := borders.max()
+            mutable x: int = lo
+            while (x <= hi):
+                grid[y][x] = 1
+                x++
+            end
+        end
+        print(f"Processed row {y+1}/{height}")
+    end
+
+    rects: list[(int,int,int,int,int)] = []
+
+    for i in range(n):
+        for j in range(i+1, n):
+            (x1,y1) := tiles[i]
+            (x2,y2) := tiles[j]
+
+            if x1 == x2 || y1 == y2 then continue
+
+            minx := if x1 < x2 then x1 else x2
+            maxx := if x1 > x2 then x1 else x2
+            miny := if y1 < y2 then y1 else y2
+            maxy := if y1 > y2 then y1 else y2
+
+            area :=
+                (1 + coords[maxx] - coords[minx]) *
+                (1 + coords[maxy] - coords[miny])
+
+            rects += [(minx,miny,maxx,maxy,area)]
+        end
+        print(f"Generated rectangles for tile {i+1}/{n}")
+    end
+
+    rects = rects.sort((r)=>-r[4])
+
+    for ((x1,y1,x2,y2,area) in rects):
+        valid := true
+        for y in range(y1, y2+1):
+            for x in range(x1, x2+1):
+                if grid[y][x] == 0:
+                    valid = false
+                    break
+                end
+            end
+            if !valid then break
+        end
+
+        if valid:
+            return area
+        end
+    end
+
+    return 0
+end
+
+
+print(f"Part 1: {part1()}")
+print(f"Part 2: {part2()}")
