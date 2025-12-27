@@ -1,0 +1,191 @@
+import fs
+
+input := fs.read_file(__dir__ + "input.txt")
+
+fun parse_line(line: str) -> (list[bool], list[list[int]], list[int]):
+    // Extract indicator lights pattern [.##.]
+    start_bracket := line.chars().index_of('[')
+    end_bracket := line.chars().index_of(']')
+    lights_str := line[start_bracket+1..end_bracket]
+    
+    target: list[bool] = []
+    for ch in lights_str.iter():
+        target += [ch == '#']
+    end
+    
+    // Extract button configurations
+    buttons: list[list[int]] = []
+    mutable pos: int = end_bracket + 1
+    
+    while pos < len(line):
+        if line[pos] == '(':
+            end_paren := line.chars().index_of(')', pos)
+            button_str := line[pos+1..end_paren]
+            
+            if len(button_str) > 0:
+                button: list[int] = []
+                for num_str in button_str.split(','):
+                    button += [num_str.trim() as int]
+                end
+                buttons += [button]
+            end
+            
+            pos = end_paren + 1
+        else if line[pos] == '{':
+            // Extract joltage requirements
+            end_brace := line.chars().index_of('}', pos)
+            joltage_str := line[pos+1..end_brace]
+            
+            joltages: list[int] = []
+            for num_str in joltage_str.split(','):
+                joltages += [num_str.trim() as int]
+            end
+            
+            return (target, buttons, joltages)
+        else:
+            pos++
+        end
+    end
+    
+    return (target, buttons, [])
+end
+
+fun solve_lights(target: list[bool], buttons: list[list[int]]) -> int:
+    n := len(target)
+    m := len(buttons)
+    
+    max_combinations: int = 1 << m
+    mutable min_presses: int = 999999
+    
+    for mask in range(max_combinations):
+        state: list[bool] = []
+        for i in range(n):
+            state += [false]
+        end
+        
+        mutable presses: int = 0
+        
+        for btn_idx in range(m):
+            if (mask band (1 << btn_idx)) != 0:
+                presses += 1
+                
+                for light_idx in buttons[btn_idx]:
+                    state[light_idx] = !state[light_idx]
+                end
+            end
+        end
+        
+        mutable matches: bool = true
+        for i in range(n):
+            if state[i] != target[i]:
+                matches = false
+                break
+            end
+        end
+        
+        if matches && presses < min_presses:
+            min_presses = presses
+        end
+    end
+    
+    return min_presses
+end
+
+fun solve_joltage(joltages: list[int], buttons: list[list[int]]) -> int:
+    n := len(joltages)
+    m := len(buttons)
+    
+    max_joltage := joltages.max()
+    
+    mutable min_total: int = 999999
+    
+    max_presses_per_button := max_joltage + 5
+    
+    max_total_presses := max_joltage * 3
+    
+    for total_try in range(0, max_total_presses + 1):
+        if check_joltage_combination(joltages, buttons, total_try):
+            return total_try
+        end
+    end
+    
+    return min_total
+end
+
+fun check_joltage_combination(target: list[int], buttons: list[list[int]], total_presses: int) -> bool:
+    m := len(buttons)
+    return try_distribution(target, buttons, total_presses, 0, [])
+end
+
+fun try_distribution(target: list[int], buttons: list[list[int]], remaining: int, btn_idx: int, presses: list[int]) -> bool:
+    if btn_idx == len(buttons):
+        counters: list[int] = []
+        for i in range(len(target)):
+            counters += [0]
+        end
+        
+        for ((i, press_count) in presses.enumerate()):
+            for counter_idx in buttons[i]:
+                counters[counter_idx] += press_count
+            end
+        end
+        
+        mutable matches: bool = true
+        for i in range(len(target)):
+            if counters[i] != target[i]:
+                matches = false
+                break
+            end
+        end
+        
+        return matches
+    end
+    
+    for p in range(0, remaining + 1):
+        new_presses := presses + [p]
+        if try_distribution(target, buttons, remaining - p, btn_idx + 1, new_presses):
+            return true
+        end
+    end
+    
+    return false
+end
+
+fun part1() -> int:
+    mutable total: int = 0
+    
+    for ((i, line) in input.split_lines().enumerate()):
+        if len(line.trim()) == 0:
+            continue
+        end
+        
+        (target, buttons, _) := parse_line(line)
+        min_presses := solve_lights(target, buttons)
+        
+        print(f"Machine {i+1} (lights): {min_presses} presses")
+        total += min_presses
+    end
+    
+    return total
+end
+
+fun part2() -> int:
+    mutable total: int = 0
+    
+    for ((i, line) in input.split_lines().enumerate()):
+        if len(line.trim()) == 0:
+            continue
+        end
+        
+        (_, buttons, joltages) := parse_line(line)
+        min_presses := solve_joltage(joltages, buttons)
+        
+        print(f"Machine {i+1} (joltage): {min_presses} presses")
+        total += min_presses
+    end
+    
+    return total
+end
+
+print(f"Part 1: {part1()}")
+print(f"Part 2: {part2()}")

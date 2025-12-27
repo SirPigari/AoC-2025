@@ -39,8 +39,8 @@ Lucia handles this with the `__dir__` variable to locate the `input.txt` file.
 | 06  | Trash Compactor           | Yes    | Yes    | [Link](./06/walkthrough.md) |
 | 07  | Laboratories              | Yes    | Yes    | [Link](./07/walkthrough.md) |
 | 08  | Playground                | Yes    | Yes    | [Link](./08/walkthrough.md) |
-| 09  | Movie Theater             | No     | No     | No                          |
-| 10  | Factory                   | No     | No     | No                          |
+| 09  | Movie Theater             | Yes    | Yes    | [Link](./09/walkthrough.md) |
+| 10  | Factory                   | Yes    | Yes    | No                          |
 | 11  | Reactor                   | No     | No     | No                          |
 | 12  | Christmas Tree Farm       | No     | No     | No                          |
 
